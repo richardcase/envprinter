@@ -13,11 +13,11 @@ build: buildapp buildimage
 buildapp:
 	CGO_ENABLED=0 GOOS=linux go build -a -o build/envprinter github.com/richardcase/envprinter/
 
-buildimage: buildapps
+buildimage: buildapp
 	@echo Build Date: $(VAR_DATE) 
 	@echo Git Ref: $(VAR_REF)
 	@echo Version: $(VAR_VER)
-	docker build -t richardcase/dockercoinsgo-rng -f Dockerfile-rng --build-arg BUILD_DATE=$(VAR_DATE) --build-arg VCS_REF=$(VAR_REF) --build-arg VERSION=$(VAR_VER) .
+	docker build -t richardcase/envprinter -f Dockerfile --build-arg BUILD_DATE=$(VAR_DATE) --build-arg VCS_REF=$(VAR_REF) --build-arg VERSION=$(VAR_VER) .
 
 clean:
 	rm -rf build/
