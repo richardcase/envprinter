@@ -1,0 +1,34 @@
+sudo: required
+dist: trusty
+
+language: go
+
+go:
+    - 1.9.1
+
+services:
+    - docker
+
+install:
+    - CGO_ENABLED=0 GOOS=linux go build -a -o build/envprinter github.com/richardcase/envprinter
+
+script:
+    - echo "No tests"
+
+after_success:
+    - export REPO_ENVPRINTER=richardcase/envprinter
+    - export VERSION=`cat ./VERSION`
+    - export BUILDDATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+    - echo $VERSION
+    - echo $BUILDDATE
+    - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+    - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker build -f  Dockerfile -t $REPO_ENVPRINTER:$COMMIT --build-arg BUILD_DATE=$BUILDDATE --build-arg VCS_REF=$COMMIT --build-arg VERSION=$VERSION .
+    - docker tag $REPO_ENVPRINTER:$COMMIT $REPO_ENVPRINTER:$TAG
+    - docker tag $REPO_ENVPRINTER:$COMMIT $REPO_ENVPRINTER:travis-$TRAVIS_BUILD_NUMBER
+    - docker tag $REPO_ENVPRINTER:$COMMIT $REPO_ENVPRINTER:$VERSION
+    - docker push $REPO_ENVPRINTER
+
+env:
+    global:
+        - COMMIT=${TRAVIS_COMMIT::8}
