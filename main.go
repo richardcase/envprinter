@@ -19,7 +19,7 @@ func main() {
 	fmt.Printf("Starting Environment Printer.......\n")
 
 	stop := make(chan struct{})
-	//go dumpenvironment()
+	go dumpenvironment()
 
 	if _, err := os.Stat(configFile); err == nil {
 		go dumpconfigfile()
