@@ -2,6 +2,7 @@ FROM scratch
 
 # Bundle app 
 ADD build/envprinter /
+ADD config/default.json /config.json
 
 ENTRYPOINT ["/envprinter"]
 
